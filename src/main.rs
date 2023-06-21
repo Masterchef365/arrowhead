@@ -1,6 +1,13 @@
 use idek::{prelude::*, IndexBuffer, MultiPlatformCamera};
 
 fn main() -> Result<()> {
+    /*
+    for i in 0..10 {
+        let k = sierpiński_triangle(i).count();
+        println!("{i} {k}");
+    }
+    Ok(())
+    */
     launch::<_, TriangleApp>(Settings::default().vr_if_any_args())
 }
 
@@ -63,16 +70,17 @@ fn sierpiński_triangle(iters: usize) -> impl Iterator<Item = (f32, f32)> {
         let (rem, chr, rot) = stack.pop()?;
 
         if rem > 0 {
+            let r = rem - 1;
             match chr {
                 'x' => stack.extend([
-                    (rem - 1, 'y', -1), //
-                    (rem - 1, 'x', -1), //
-                    (rem - 1, 'y', 1),
+                    (r, 'y', -1), //
+                    (r, 'x', -1), //
+                    (r, 'y', 1),
                 ]),
                 'y' => stack.extend([
-                    (rem - 1, 'x', 1),  //
-                    (rem - 1, 'y', 1), //
-                    (rem - 1, 'x', -1),
+                    (r, 'x', 1),  //
+                    (r, 'y', 1), //
+                    (r, 'x', -1),
                 ]),
                 _ => unreachable!(),
             }
@@ -102,8 +110,9 @@ fn sierpiński_triangle_verts(
         .enumerate()
         .map(|(idx, (x, y))| {
             let f = idx as f32 / 10_000.;
+            let k = idx as f32 / iters as f32;
             Vertex {
-                pos: [x * scale, 0., y * scale],
+                pos: [x * scale, f, y * scale],
                 color: [f.cos().abs(), f.sin().abs(), (f * 3.).sin().abs()],
             }
         })
